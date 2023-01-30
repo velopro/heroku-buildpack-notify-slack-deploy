@@ -34,8 +34,11 @@ else
   SLACK_MESSAGE="*$HEROKU_APP_NAME* was deployed\n>$AUTHOR_NAME - $AUTHOR_EMAIL\n\n\`\`\`\n$COMMIT_MESSAGE\n\`\`\`\n$COMMIT_URL"
 fi
 
+# Add delay before message
+DT=`date +%s -d "+1 minute"`
+
 echo "-----> Notifying Slack that the deploy is complete"
 echo "       $SLACK_MESSAGE"
-curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\"}" $SLACK_DEPLOYMENT_WEBHOOK_URL
+curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\",\"post_at\":$DT}" $SLACK_DEPLOYMENT_WEBHOOK_URL
 echo ""
 echo ""
