@@ -36,15 +36,15 @@ else
   PULL_URL=$(echo "$COMMIT_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin, strict=False)['html_url'])" || echo '')
   #SLACK_MESSAGE="*Test App Deployed*\nPR#$HEROKU_PR_NUMBER - $HEROKU_BRANCH\n>https://$HEROKU_APP_NAME.herokuapp.com\n\n\`\`\`\n$PULL_TITLE\n\`\`\`\n$PULL_URL"
   SLACK_MESSAGE="*Test App Deployed*\nPR#$HEROKU_PR_NUMBER - $HEROKU_BRANCH\n>https://$HEROKU_APP_NAME.herokuapp.com\n\n\`\`\`\n$PULL_TITLE\n\`\`\`\n$PULL_URL"
+#  Add delay before message
+  DT=`date +%s -d "+2 minutes" | tr -d '\n'`
+  HUMAN_DT=`date -d "+2 minutes" | tr -d '\n'`
 
+  echo "-----> Notifying Slack that the deploy is complete at $HUMAN_DT"
+  echo "       $SLACK_MESSAGE"
+  curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\",\"post_at\":$DT}" $SLACK_DEPLOYMENT_WEBHOOK_URL
+  echo ""
+  echo ""
 fi
 
-# Add delay before message
-DT=`date +%s -d "+2 minutes" | tr -d '\n'`
-HUMAN_DT=`date -d "+2 minutes" | tr -d '\n'`
 
-echo "-----> Notifying Slack that the deploy is complete at $HUMAN_DT"
-echo "       $SLACK_MESSAGE"
-curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\",\"post_at\":$DT}" $SLACK_DEPLOYMENT_WEBHOOK_URL
-echo ""
-echo ""
