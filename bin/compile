@@ -16,15 +16,8 @@ export_env_dir() {
 
 export_env_dir $3
 
-SLACK_MESSAGE="Test App for Pull Req: https://$HEROKU_APP_NAME.herokuapp.com was deployed for testing"
 
 if [[ -z "${DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN}" || -z "${DEPLOY_NOTIFY_GITHUB_ORG}" || -z "${DEPLOY_NOTIFY_GITHUB_PROJECT}" || -z "${HEROKU_PR_NUMBER}" ]]; then
-  # Not loading Github Data
-  SLACK_MESSAGE="$SLACK_MESSAGE"
-elif [[ -z "${SOURCE_VERSION}" ]]; then
-  # We don't have the current git sha
-  SLACK_MESSAGE="$SLACK_MESSAGE"
-else
   echo "-----> Loading commit information from Github"
   #COMMIT_JSON=$(curl -H "Authorization: token $DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN" https://api.github.com/repos/$DEPLOY_NOTIFY_GITHUB_ORG/$DEPLOY_NOTIFY_GITHUB_PROJECT/commits/$SOURCE_VERSION)
   #AUTHOR_NAME=$(echo "$COMMIT_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin, strict=False)['commit']['author']['name'])" || echo '')
@@ -34,7 +27,6 @@ else
   COMMIT_JSON=$(curl -H "Authorization: token $DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN" https://api.github.com/repos/$DEPLOY_NOTIFY_GITHUB_ORG/$DEPLOY_NOTIFY_GITHUB_PROJECT/pulls/$HEROKU_PR_NUMBER)
   PULL_TITLE=$(echo "$COMMIT_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin, strict=False)['title'])" || echo '')
   PULL_URL=$(echo "$COMMIT_JSON" | python3 -c "import sys, json; print(json.load(sys.stdin, strict=False)['html_url'])" || echo '')
-  #SLACK_MESSAGE="*Test App Deployed*\nPR#$HEROKU_PR_NUMBER - $HEROKU_BRANCH\n>https://$HEROKU_APP_NAME.herokuapp.com\n\n\`\`\`\n$PULL_TITLE\n\`\`\`\n$PULL_URL"
   SLACK_MESSAGE="*Test App Deployed*\nPR#$HEROKU_PR_NUMBER - $HEROKU_BRANCH\n>https://$HEROKU_APP_NAME.herokuapp.com\n\n\`\`\`\n$PULL_TITLE\n\`\`\`\n$PULL_URL"
 #  Add delay before message
   DT=`date +%s -d "+2 minutes" | tr -d '\n'`
