@@ -16,6 +16,7 @@ export_env_dir() {
 
 export_env_dir $3
 echo "-----> Slack Notification for Deploy"
+echo "ARGS = " $*
 echo "DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN = $DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN"
 echo "DEPLOY_NOTIFY_GITHUB_ORG = $DEPLOY_NOTIFY_GITHUB_ORG"
 echo "DEPLOY_NOTIFY_GITHUB_PROJECT = $DEPLOY_NOTIFY_GITHUB_PROJECT"
