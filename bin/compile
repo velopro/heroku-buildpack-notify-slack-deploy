@@ -15,7 +15,11 @@ export_env_dir() {
 }
 
 export_env_dir $3
-
+echo "-----> Slack Notification for Deploy"
+echo "DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN = $DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN"
+echo "DEPLOY_NOTIFY_GITHUB_ORG = $DEPLOY_NOTIFY_GITHUB_ORG"
+echo "DEPLOY_NOTIFY_GITHUB_PROJECT = $DEPLOY_NOTIFY_GITHUB_PROJECT"
+echo "HEROKU_PR_NUMBER = $HEROKU_PR_NUMBER"
 
 if [[ -z "${DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN}" || -z "${DEPLOY_NOTIFY_GITHUB_ORG}" || -z "${DEPLOY_NOTIFY_GITHUB_PROJECT}" || -z "${HEROKU_PR_NUMBER}" ]]; then
   echo "-----> Loading commit information from Github"
@@ -31,12 +35,15 @@ if [[ -z "${DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN}" || -z "${DEPLOY_NOTIFY_GITHUB_ORG}
 #  Add delay before message
   DT=`date +%s -d "+2 minutes" | tr -d '\n'`
   HUMAN_DT=`date -d "+2 minutes" | tr -d '\n'`
-
+  DATA="{\"text\":\"$SLACK_MESSAGE\",\"post_at\":$DT}"
   echo "-----> Notifying Slack that the deploy is complete at $HUMAN_DT"
+  echo "SLACK_CALL = $DATA"
   echo "       $SLACK_MESSAGE"
-  curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\",\"post_at\":$DT}" $SLACK_DEPLOYMENT_WEBHOOK_URL
+  curl -s -X POST -H 'Content-type: application/json' --data "$DATA" $SLACK_DEPLOYMENT_WEBHOOK_URL
   echo ""
   echo ""
+else
+  echo "-----> Slack Notification FAILED"
 fi
 
 
